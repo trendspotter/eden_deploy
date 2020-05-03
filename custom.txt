@@ -1,0 +1,30 @@
+# Install
+cd /root
+apt-get -y install git python3 sudo
+
+git clone -b custom https://github.com/trendspotter/eden_deploy.git
+cd eden_deploy
+
+bash bootstrap.sh
+# Alternatively, for setup instance:
+# bash bootstrap_coapp.sh
+
+# Add user
+cd /home/prod
+python web2py.py -S eden -M
+
+from gluon import CRYPT
+crypted = CRYPT(key = current.auth.settings.hmac_key, digest_alg = 'sha512')('testing')[0]
+user_id = db.auth_user.insert(first_name='Admin', last_name='Admin', email='admin@example.com', password=crypted)
+user = db(db.auth_user.id > 0).select().last()
+auth.s3_approve_user(user)
+auth.add_membership(1, user_id)
+db.commit()
+
+# Migrate database (not needed during setup, just for info)
+cd /home/prod
+sed -i 's/settings.base.migrate = False/settings.base.migrate = True/g' applications/eden/models/000_config.py
+rm -rf applications/eden/compiled
+python web2py.py -S eden -M -R applications/eden/static/scripts/tools/noop.py
+sed -i 's/settings.base.migrate = True/settings.base.migrate = False/g' applications/eden/models/000_config.py
+python web2py.py -S eden -M -R applications/eden/static/scripts/tools/compile.py
