@@ -44,7 +44,7 @@
 
 - name: Clone Coapp
   git: # recursive by default
-    repo: git://github.com/sahana/eden-stable
+    repo: git://github.com/sahana/eden
     dest: /home/setup/applications/{{ appname }}
     #version: cda35fd
     # Don't update unless explicitly desired
@@ -123,9 +123,6 @@
   become: yes
   become_user: web2py
   #become_flags: '-H'
-
-- name: Redirect port 80 to 8000
-  command: iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-ports 8000
 
 - name: Launch Coapp
   # https://github.com/ansible/ansible/issues/22171

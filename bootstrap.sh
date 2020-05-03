@@ -9,8 +9,8 @@ else
 fi
 
 if [ -z "$2" ]; then
-    pubDNS=`wget --quiet -O - http://169.254.169.254/latest/meta-data/public-hostname`
-    privDNS=`wget --quiet -O - http://169.254.169.254/latest/meta-data/hostname | sed "s/.compute.internal//"`
+    pubDNS="sahana.spotter.vm"
+    privDNS="sahana"
 else
     # hostname.domain
     pubDNS="$2"
@@ -63,10 +63,9 @@ cat << EOF > "deploy.yml"
     type: 'prod'
     start: True
     web_server: 'nginx'
-    repo_url: 'https://github.com/sahana/eden-stable.git'
+    repo_url: 'https://github.com/sahana/eden.git'
 
   roles:
-    - swap
     - ansible
     - common
     - exim

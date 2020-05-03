@@ -1,6 +1,6 @@
 #!/bin/bash
 
-pubDNS=`wget --quiet -O - http://169.254.169.254/latest/meta-data/public-hostname`
+pubDNS="sahana.spotter.vm"
 
 # Which OS are we running?
 read -d . DEBIAN < /etc/debian_version
@@ -33,7 +33,6 @@ cat << EOF > "deploy_coapp.yml"
     appname: eden
 
   roles:
-    - swap
     - ansible
     - coapp
 EOF

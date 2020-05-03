@@ -17,18 +17,6 @@
 - import_tasks: ec2.yml
   when: cloud_cfg.stat.exists
 
-- name: Update hostname file
-  template: src=hostname dest=/etc/hostname
-  become: yes
-
-- name: Update hosts file
-  lineinfile: dest=/etc/hosts
-              regexp="^127.0.0.1 localhost"
-              insertafter="^127.0.0.1 localhost"
-              line="127.0.0.1 {{ sitename }} {{ hostname }} localhost"
-              state=present
-  become: yes
-
 - name: Update mailname file
   template: src=mailname dest=/etc/mailname
   become: yes
@@ -595,12 +583,6 @@
 - name: Stop Rocket Server (if deploying from co-app bootstrap)
   #service: name=web2py  state=stopped
   command: /etc/init.d/web2py stop
-  become: yes
-  ignore_errors: True
-  when: coapp.stat.exists == True
-
-- name: Remove port 80 redirection rule (if deploying from co-app bootstrap)
-  command: iptables -t nat -D PREROUTING -p tcp --dport 80 -j REDIRECT --to-ports 8000
   become: yes
   ignore_errors: True
   when: coapp.stat.exists == True
